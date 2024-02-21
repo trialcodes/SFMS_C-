@@ -1,0 +1,427 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using MySql.Data.MySqlClient;
+using System.Windows.Forms.DataVisualization.Charting;
+
+namespace StudentMS
+{
+    public partial class Form1 : Form
+    {
+
+        MySqlConnection con = new MySqlConnection("server=localhost;username=root;database=mysql;");
+        MySqlCommand com;
+        MySqlDataReader dr;
+
+        public void ClosedReader()
+        {
+            dr = com.ExecuteReader();
+            dr.Close();
+        }
+
+
+        void Totalbalance() {
+
+            int lb11;
+            lb11 = Convert.ToInt32(label11.Text);
+            if (lb11 == 0)
+            {
+
+            }
+            else if (lb11 > 0)
+            {
+                com = new MySqlCommand("select sum(totalbalance) from dbstudent_MS.student;", con);
+                dr = com.ExecuteReader();
+                while (dr.Read())
+                {
+                    label25.Text = dr.GetString(0).ToString();
+                }
+                dr.Close();
+            }
+
+        }
+
+        public void Autocounts() {
+           
+com = new MySqlCommand("select count(amounttopay) from dbstudent_MS.paymentshistory where amounttopay != 'CANCELLED';", con);
+            dr = com.ExecuteReader();
+            while (dr.Read())
+            {
+                label31.Text = dr.GetString(0).ToString();
+            }
+            dr.Close();
+
+            com = new MySqlCommand("select count(amounttopay) from dbstudent_MS.paymentshistory where amounttopay = 'CANCELLED';", con);
+            dr = com.ExecuteReader();
+            while (dr.Read())
+            {
+                label32.Text = dr.GetString(0).ToString();
+            }
+            dr.Close();
+
+
+
+            if ((label31.Text == "0")) { }
+
+            else
+            {
+                com = new MySqlCommand("select sum(payment) from dbstudent_MS.paymentshistory where amounttopay != 'CANCELLED';", con);
+                dr = com.ExecuteReader();
+                while (dr.Read())
+                {
+                    label26.Text = dr.GetString(0).ToString();
+                }
+                dr.Close();
+            }
+
+            if ((label32.Text == "0")) { }
+
+            else
+            {
+                com = new MySqlCommand("select sum(payment) from dbstudent_MS.paymentshistory where amounttopay = 'CANCELLED';", con);
+                dr = com.ExecuteReader();
+                while (dr.Read())
+                {
+
+                    label30.Text = dr.GetInt32(0).ToString();
+
+                }
+                dr.Close();
+            }
+
+            int s1;
+            s1 = Convert.ToInt32(label11 .Text);
+            com = new MySqlCommand("select count(id) from dbstudent_MS.student;", con);
+            dr = com.ExecuteReader();
+            while (dr.Read()) {
+                label11.Text = dr.GetInt32(0).ToString();
+            }
+            dr.Close();
+            if (s1 >= 2000)
+            {
+                button2.Enabled = false;
+                MessageBox.Show("Please call/text " + label33.Text + " if there's something like damages/errors. Thank you!", "Invalid Action", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                groupBox1.Visible = true;
+                Students studentsf = new Students();
+                studentsf.Close();
+            }
+
+            com = new MySqlCommand("select count(id) from dbstudent_MS.student where kinderlevel='PRE KINDER 1';", con);
+            dr = com.ExecuteReader();
+            while (dr.Read())
+            {
+                label13.Text = dr.GetInt32(0).ToString();
+            }
+            dr.Close();
+
+            com = new MySqlCommand("select count(id) from dbstudent_MS.student where kinderlevel='PRE KINDER 2';", con);
+            dr = com.ExecuteReader();
+            while (dr.Read())
+            {
+                label21.Text = dr.GetInt32(0).ToString();
+            }
+            dr.Close();
+
+            com = new MySqlCommand("select count(id) from dbstudent_MS.student where kinderlevel='KINDER';", con);
+            dr = com.ExecuteReader();
+            while (dr.Read())
+            {
+                label23.Text = dr.GetInt32(0).ToString();
+            }
+            dr.Close();
+
+            com = new MySqlCommand("select count(status) from dbstudent_MS.useraccounts where status='APPROVED';", con);
+            dr = com.ExecuteReader();
+            while (dr.Read())
+            {
+                label17.Text = dr.GetInt32(0).ToString();
+            }
+            dr.Close();
+
+            com = new MySqlCommand("select count(status) from dbstudent_MS.useraccounts where status='PENDING';", con);
+            dr = com.ExecuteReader();
+            while (dr.Read())
+            {
+                label19.Text = dr.GetInt32(0).ToString();
+            }
+            dr.Close();
+
+            com = new MySqlCommand("select count(status) from dbstudent_MS.useraccounts;", con);
+            dr = com.ExecuteReader();
+            while (dr.Read())
+            {
+                label15.Text = dr.GetInt32(0).ToString();
+            }
+            dr.Close();
+
+            Analysis();
+
+        }
+
+        public static Form1 instance;
+        public Label lb6;
+        public Label lb4;
+        public Label lb8;
+        public Label lb7;
+
+        public Form1()
+        {
+            InitializeComponent();
+            instance = this;
+            lb6 = label6;
+            lb4 = label4;
+            lb8 = label8;
+            lb7 = label7;
+        }
+
+        private void label19_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label20_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            IsMdiContainer = true;
+            con.Open();
+            timer1.Start();
+            button1.BackColor = Color.Firebrick;
+            button2.BackColor = Color.MediumBlue;
+            button4.BackColor = Color.MediumBlue;
+            button5.BackColor = Color.MediumBlue;
+            button6.BackColor = Color.MediumBlue;
+            button7.BackColor = Color.MediumBlue;
+            //ControlBox = false;
+            //  groupBox1.BackgroundImage = StudentMS.Properties.Resources.user23;
+            //    //   label12.BackColor = Color.FromArgb(200, Color.MediumBlue);
+            //   label11.BackColor = Color.FromArgb(200, Color.MediumBlue);
+            //    label18.BackColor = Color.FromArgb(200, Color.MediumBlue);
+            //     label17.BackColor = Color.FromArgb(200, Color.MediumBlue);
+            //     label14.BackColor = Color.FromArgb(200, Color.MediumBlue);
+            //     label13.BackColor = Color.FromArgb(200, Color.MediumBlue);
+            //     label16.BackColor = Color.FromArgb(200, Color.MediumBlue);
+            //     label15.BackColor = Color.FromArgb(200, Color.MediumBlue);
+            //      label20.BackColor = Color.FromArgb(200, Color.MediumBlue);
+            //      label19.BackColor = Color.FromArgb(200, Color.MediumBlue);
+            label8.Text = "Role: " + login.instance.lb11.Text;
+            label6.Text = "Username: " + login.instance.lb8.Text; 
+            label7.Text = login.instance.lb20.Text;
+            button3.Enabled = false;
+          Autocounts();
+          Analysis();
+
+        }
+
+        void Analysis() {
+            chart1.Titles.Clear();
+            chart1.Titles.Add("KINDER LEVEL ANALYSIS");
+            chart1.Series.Clear();
+            chart1.Series.Add("KinderLevel");
+
+            chart1.Series["KinderLevel"].ChartType = SeriesChartType.Column;
+            chart1.Series["KinderLevel"].Points.AddXY("K1", label13.Text);
+
+            chart1.Series["KinderLevel"].ChartType = SeriesChartType.Column;
+            chart1.Series["KinderLevel"].Points.AddXY("K2", label21.Text);
+
+            chart1.Series["KinderLevel"].ChartType = SeriesChartType.Column;
+            chart1.Series["KinderLevel"].Points.AddXY("K3", label23.Text);
+
+
+            chart2.Titles.Clear();
+            chart2.Titles.Add("STUDENT FEES ANALYSIS");
+            chart2.Series.Clear();
+            chart2.Series.Add("fee");
+
+            chart2.Series["fee"].ChartType = SeriesChartType.Pie;
+            chart2.Series["fee"].Points.AddXY("Overall Amount Paid", label26.Text);
+
+            chart2.Series["fee"].ChartType = SeriesChartType.Pie;
+            chart2.Series["fee"].Points.AddXY("Overall Balance", label25.Text);
+
+            chart2.Series["fee"].ChartType = SeriesChartType.Pie;
+            chart2.Series["fee"].Points.AddXY("Cancelled Payments", label30.Text);
+        }
+
+        void AnalysisFEE()
+        {
+            
+        
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            label4.Text = DateTime.Now.ToString("MM/dd/yyyy");
+            label5 .Text = DateTime.Now.ToString("hh:mm:ss tt");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            button1.BackColor = Color.MediumBlue; 
+            button2.BackColor = Color.Firebrick;
+            button4.BackColor = Color.MediumBlue;
+            button5.BackColor = Color.MediumBlue;
+            button6.BackColor = Color.MediumBlue;
+            button7.BackColor = Color.MediumBlue;
+            // if (label8.Text == "Role: ADMIN")
+            // {
+            groupBox1.Visible = false;
+                Students studentsf = new Students();
+                studentsf.MdiParent = this;
+                studentsf.Show();
+            //}
+            // else {
+            //     MessageBox.Show("You are not allowed to use this transaction.", "Invalid
+            //Action",MessageBoxButtons.OK,MessageBoxIcon.Error);}
+
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            button1.BackColor = Color.Firebrick;
+            button2.BackColor = Color.MediumBlue;
+            button4.BackColor = Color.MediumBlue;
+            button5.BackColor = Color.MediumBlue;
+            button6.BackColor = Color.MediumBlue;
+            button7.BackColor = Color.MediumBlue;
+            groupBox1.Visible = true ;
+            Students studentsf = new Students();
+            studentsf.Close();
+            Autocounts();
+            Analysis();
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            button1.BackColor = Color.MediumBlue;
+            button2.BackColor = Color.MediumBlue; 
+            button4.BackColor = Color.MediumBlue;
+            button5.BackColor = Color.Firebrick;
+            button6.BackColor = Color.MediumBlue;
+            button7.BackColor = Color.MediumBlue;
+            groupBox1.Visible = false;
+            Settings sett = new Settings();
+            sett.MdiParent = this;
+            sett.Show();
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            button1.BackColor = Color.MediumBlue;
+            button2.BackColor = Color.MediumBlue;
+            button4.BackColor = Color.MediumBlue;
+            button5.BackColor = Color.MediumBlue;
+            button6.BackColor = Color.MediumBlue;
+            button7.BackColor = Color.Firebrick;
+            groupBox1.Visible = true;
+            Students studentsf = new Students();
+            studentsf.Close();
+            Autocounts();
+            login lf = new login();
+            lf.Show();
+            this.Hide();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            button1.BackColor = Color.MediumBlue;
+            button2.BackColor = Color.MediumBlue;
+            button4.BackColor = Color.MediumBlue;
+            button5.BackColor = Color.MediumBlue;
+            button6.BackColor = Color.Firebrick; 
+            button7.BackColor = Color.MediumBlue;
+            if (label8.Text == "Role: ADMIN")
+            {
+                groupBox1.Visible = false;
+                UserManagement userm = new UserManagement();
+                userm.MdiParent = this;
+                userm.Show();
+            }
+            else
+            {
+                MessageBox.Show("You are not allowed to use this transaction.", "Invalid Action", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+          
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            button1.BackColor = Color.MediumBlue;
+            button2.BackColor = Color.MediumBlue;
+            button4.BackColor = Color.Firebrick; 
+            button5.BackColor = Color.MediumBlue;
+            button6.BackColor = Color.MediumBlue;
+            button7.BackColor = Color.MediumBlue;
+            if (label8.Text == "Role: ADMIN")
+            {
+                MessageBox.Show("You are not allowed to use this transaction.", "Invalid Action", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                groupBox1.Visible = false;
+                Payments payf = new Payments();
+                payf.MdiParent = this;
+                payf.Show();
+            }
+
+           // groupBox1.Visible = false;
+            //Payments payf1 = new Payments();
+            //payf1.MdiParent = this;
+            //payf1.Show();
+
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Dispose();
+            this.Close();
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label25_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label26_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_TextChanged(object sender, EventArgs e)
+        {
+            Totalbalance();
+            Analysis();
+        }
+
+        private void label25_TextChanged(object sender, EventArgs e)
+        {
+           
+        }
+    }
+}
